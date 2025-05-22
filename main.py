@@ -7,9 +7,9 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=config("ALLOW_ORIGINS", default="*"),
-    allow_methods=config("ALLOW_METHODS", default="*"),
-    allow_headers=config("ALLOW_HEADERS", default="*"),
+    allow_origins=config("ALLOW_ORIGINS", default="*", cast=Csv()),
+    allow_methods=config("ALLOW_METHODS", default="*", cast=Csv()),
+    allow_headers=config("ALLOW_HEADERS", default="*", cast=Csv()),
 )
 
 GITHUB_USERNAME = "carvalhocaio"
