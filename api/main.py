@@ -15,6 +15,10 @@ app.add_middleware(
 GITHUB_USERNAME = "carvalhocaio"
 GITHUB_TOKEN = config("GITHUB_TOKEN")
 
+@app.get("/")
+def health():
+    return {"message": "online!"}
+
 
 @app.get("/github/repos")
 async def get_guthub_repos():
