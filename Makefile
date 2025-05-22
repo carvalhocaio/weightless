@@ -1,5 +1,5 @@
 run:
-	uvicorn main:app --reload
+	uvicorn api.main:app --reload
 
 lint:
 	ruff check . && ruff check . --diff
