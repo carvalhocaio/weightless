@@ -1,5 +1,5 @@
 import httpx
-from decouple import Csv, config
+from decouple import config
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,16 +12,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-GITHUB_USERNAME = "carvalhocaio"
 GITHUB_TOKEN = config("GITHUB_TOKEN")
+
 
 @app.get("/")
 def health():
     return {"message": "online!"}
 
 
-@app.get("/github/repos")
-async def get_guthub_repos():
+@app.get("/github/repos/{username}")
+async def get_guthub_repos(username: str):
     headers = {
         "Authorizarion": f"Bearer {GITHUB_TOKEN}",
         "Accept": "application/vnd.github+json",
@@ -29,7 +29,7 @@ async def get_guthub_repos():
 
     async with httpx.AsyncClient() as client:
         try:
-            repo_url = f"https://api.github.com/users/{GITHUB_USERNAME}/repos?sort=updated&per_page=10"
+            repo_url = f"https://api.github.com/users/{username}/repos?sort=updated&per_page=10"
             repo_resp = await client.get(repo_url, headers=headers)
             repo_resp.raise_for_status()
             repos = [r for r in repo_resp.json() if not r.get("fokr")][:3]
