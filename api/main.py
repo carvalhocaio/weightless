@@ -46,7 +46,3 @@ async def get_guthub_repos(username: str):
             raise HTTPException(
                 status_code=e.response.status_code, detail=str(e)
             )
-
-
-# the song that inspired the name for this project
-# https://www.youtube.com/watch?v=DOT1LmQbFFA&pp=ygUKd2VpZ2h0bGVzcw%3D%3D
