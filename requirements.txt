@@ -3,3 +3,4 @@ fastapi
 uvicorn
 httpx
 python-decouple
+sentry-sdk[fastapi]
