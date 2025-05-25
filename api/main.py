@@ -1,8 +1,10 @@
 import httpx
+import sentry_sdk
 from decouple import config
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+sentry_sdk.init(dsn=config("SENTRY_DSN"), send_default_pii=True)
 app = FastAPI()
 
 app.add_middleware(
