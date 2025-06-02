@@ -4,9 +4,7 @@ API FastAPI para listar repositórios do GitHub de um usuário.
 
 ## Descrição
 
-Este projeto expõe uma API construída com [FastAPI](https://fastapi.tiangolo.com/) que retorna os
-repositórios mais recentes de um usuário do GitHub, incluindo as linguagens utilizadas em cada
-repositório.
+Este projeto expõe uma API construída com [FastAPI](https://fastapi.tiangolo.com/) que retorna os repositórios mais recentes de um usuário do GitHub, incluindo as linguagens utilizadas em cada repositório.
 
 ## Funcionalidades
 
@@ -30,6 +28,11 @@ repositório.
    GITHUB_TOKEN=seu_token_github
    ```
 
+   (Opcional) Para monitoramento de erros, adicione também:
+   ```
+   SENTRY_DSN=seu_sentry_dsn
+   ```
+
 ## Uso
 
 Para rodar localmente:
@@ -48,8 +51,8 @@ Acesse [http://localhost:8000](http://localhost:8000).
 - `GET /github/repos/{username}`  
   Retorna até 3 repositórios mais recentes do usuário informado, com as linguagens utilizadas.
 
-- `GET /docs`
-  Retorna a documentação da API.
+- `GET /docs`  
+  Retorna a documentação automática da API (Swagger UI).
 
 ## Deploy
 
@@ -62,6 +65,7 @@ O projeto está configurado para deploy automático na Vercel, utilizando o arqu
 - [httpx](https://www.python-httpx.org/)
 - [python-decouple](https://github.com/henriquebastos/python-decouple)
 - [ruff](https://github.com/astral-sh/ruff) (lint e formatador)
+- [sentry-sdk](https://github.com/getsentry/sentry-python) (opcional, para monitoramento)
 
 ---
 
