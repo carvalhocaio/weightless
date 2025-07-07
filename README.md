@@ -2,6 +2,8 @@
 
 API FastAPI para listar repositórios do GitHub de um usuário.
 
+Documentação: https://deepwiki.com/carvalhocaio/weightless
+
 ## Descrição
 
 Este projeto expõe uma API construída com [FastAPI](https://fastapi.tiangolo.com/) que retorna os repositórios mais recentes de um usuário do GitHub, incluindo as linguagens utilizadas em cada repositório.
