@@ -34,7 +34,7 @@ async def get_guthub_repos(username: str):
             repo_url = f"https://api.github.com/users/{username}/repos?sort=updated&per_page=10"
             repo_resp = await client.get(repo_url, headers=headers)
             repo_resp.raise_for_status()
-            repos = [r for r in repo_resp.json() if not r.get("fokr")][:3]
+            repos = [r for r in repo_resp.json()]
 
             for repo in repos:
                 langs_resp = await client.get(
