@@ -1,7 +1,9 @@
+from http import HTTPStatus
+
 import httpx
 import sentry_sdk
 from decouple import config
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 sentry_sdk.init(dsn=config("SENTRY_DSN"), send_default_pii=True)
@@ -17,9 +19,10 @@ app.add_middleware(
 GITHUB_TOKEN = config("GITHUB_TOKEN")
 
 
-@app.get("/")
-def health():
-    return {"message": "online!"}
+@app.get("/", status_code=HTTPStatus.OK)
+def root(request: Request):
+    base_url = str(request.base_url).rstrip("/")
+    return {"message": "Weightless API", "docs": f"{base_url}/docs"}
 
 
 @app.get("/github/repos/{username}")
