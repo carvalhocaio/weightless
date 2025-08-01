@@ -26,7 +26,7 @@ def root(request: Request):
 
 
 @app.get("/github/repos/{username}")
-async def get_guthub_repos(username: str):
+async def get_github_repos(username: str):
     headers = {
         "Authorization": f"Bearer {GITHUB_TOKEN}",
         "Accept": "application/vnd.github+json",
