@@ -13,7 +13,6 @@ cada repositório.
 - Endpoint de saúde (`/`)
 - Listagem dos repositórios mais recentes do GitHub (`/github/repos/{username}`)
 - Suporte a CORS
-- Deploy pronto para [Vercel](https://vercel.com/)
 
 ## Instalação
 
@@ -55,10 +54,6 @@ Acesse [http://localhost:8000](http://localhost:8000).
 
 - `GET /docs`  
   Retorna a documentação automática da API (Swagger UI).
-
-## Deploy
-
-O projeto está configurado para deploy automático na Vercel, utilizando o arquivo [`vercel.json`](vercel.json).
 
 ## Ferramentas de Desenvolvimento
 
