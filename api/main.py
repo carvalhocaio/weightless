@@ -1,8 +1,9 @@
 import asyncio
 import logging
 import re
+import time
 from http import HTTPStatus
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import httpx
 import sentry_sdk
@@ -24,6 +25,11 @@ app.add_middleware(
 GITHUB_TOKEN = config("GITHUB_TOKEN")
 TIMEOUT = 30.0  # seconds
 MAX_RETRIES = 3
+
+# Cache configuration
+CACHE_TTL_REPOS = 300  # 5 minutes
+CACHE_TTL_LANGUAGES = 600  # 10 minutes
+_cache: Dict[str, Tuple[float, any]] = {}
 
 logger = logging.getLogger(__name__)
 
@@ -113,6 +119,50 @@ async def make_github_request_with_retry(
     raise HTTPException(status_code=500, detail="Maximum retries exceeded")
 
 
+def _get_from_cache(key: str) -> Optional[any]:
+    """Get item from cache if not expired"""
+    if key in _cache:
+        expires_at, value = _cache[key]
+        if time.time() < expires_at:
+            return value
+        else:
+            del _cache[key]
+    return None
+
+
+def _set_cache(key: str, value: any, ttl: int) -> None:
+    """Set item in cache with TTL in seconds"""
+    expires_at = time.time() + ttl
+    _cache[key] = (expires_at, value)
+
+
+async def fetch_repository_languages(
+    client: httpx.AsyncClient, repo: dict, headers: dict
+) -> Tuple[str, List[str]]:
+    """Fetch languages for a single repository"""
+    repo_name = repo["name"]
+    cache_key = f"languages:{repo['languages_url']}"
+
+    # Check cache first
+    cached_languages = _get_from_cache(cache_key)
+    if cached_languages is not None:
+        return repo_name, cached_languages
+
+    try:
+        langs_resp = await make_github_request_with_retry(
+            client, repo["languages_url"], headers
+        )
+        languages = list(langs_resp.json().keys())
+
+        # Cache the result
+        _set_cache(cache_key, languages, CACHE_TTL_LANGUAGES)
+
+        return repo_name, languages
+    except Exception as e:
+        logger.warning(f"Failed to fetch languages for {repo_name}: {str(e)}")
+        return repo_name, []
+
+
 @app.get("/", status_code=HTTPStatus.OK)
 def root(request: Request):
     base_url = str(request.base_url).rstrip("/")
@@ -130,6 +180,12 @@ async def get_github_repos(username: str) -> List[GitHubRepoResponse]:
             detail=f"Invalid username: {str(e)}",
         )
 
+    # Check cache first
+    cache_key = f"repos:{username}"
+    cached_result = _get_from_cache(cache_key)
+    if cached_result is not None:
+        return cached_result
+
     headers = {
         "Authorization": f"Bearer {GITHUB_TOKEN}",
         "Accept": "application/vnd.github+json",
@@ -142,27 +198,35 @@ async def get_github_repos(username: str) -> List[GitHubRepoResponse]:
         )
         repos = repo_resp.json()
 
-        # Fetch languages for each repo with graceful error handling
-        filtered_repos = []
-        for repo in repos:
-            try:
-                langs_resp = await make_github_request_with_retry(
-                    client, repo["languages_url"], headers
-                )
-                languages = list(langs_resp.json().keys())
-            except Exception as e:
-                logger.warning(
-                    f"Failed to fetch languages for {repo['name']}: {str(e)}"
-                )
-                languages = []
+        # Fetch languages for all repos concurrently
+        language_tasks = [
+            fetch_repository_languages(client, repo, headers) for repo in repos
+        ]
+        language_results = await asyncio.gather(
+            *language_tasks, return_exceptions=True
+        )
 
-            filtered_repos.append(
-                GitHubRepoResponse(
-                    name=repo["name"],
-                    description=repo.get("description"),
-                    languages=languages,
-                    url=repo["html_url"],
-                )
+        # Build language mapping
+        language_map = {}
+        for result in language_results:
+            if isinstance(result, Exception):
+                logger.warning(f"Language fetch failed: {str(result)}")
+                continue
+            repo_name, languages = result
+            language_map[repo_name] = languages
+
+        # Build response
+        filtered_repos = [
+            GitHubRepoResponse(
+                name=repo["name"],
+                description=repo.get("description"),
+                languages=language_map.get(repo["name"], []),
+                url=repo["html_url"],
             )
+            for repo in repos
+        ]
+
+        # Cache the result
+        _set_cache(cache_key, filtered_repos, CACHE_TTL_REPOS)
 
         return filtered_repos
