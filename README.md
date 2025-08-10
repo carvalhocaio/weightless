@@ -63,6 +63,7 @@ Acesse [http://localhost:8000](http://localhost:8000).
 - [python-decouple](https://github.com/henriquebastos/python-decouple)
 - [ruff](https://github.com/astral-sh/ruff) (lint e formatador)
 - [sentry-sdk](https://github.com/getsentry/sentry-python) (opcional, para monitoramento)
+- [pydantic](https://docs.pydantic.dev/latest/)
 
 ---
 
