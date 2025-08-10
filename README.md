@@ -50,7 +50,7 @@ Acesse [http://localhost:8000](http://localhost:8000).
   Retorna mensagem de status.
 
 - `GET /github/repos/{username}`  
-  Retorna até 3 repositórios mais recentes do usuário informado, com as linguagens utilizadas.
+  Retorna até 10 repositórios mais recentes do usuário informado, com as linguagens utilizadas.
 
 - `GET /docs`  
   Retorna a documentação automática da API (Swagger UI).
