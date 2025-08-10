@@ -8,7 +8,7 @@ import structlog
 from fastapi import HTTPException
 
 from ..config.settings import settings
-from ..models.repository import GitHubRepoResponse
+from ..models.repository import Repository
 
 logger = structlog.get_logger(__name__)
 
@@ -193,9 +193,7 @@ class GitHubService:
             )
             return repo_name, []
 
-    async def get_user_repositories(
-        self, username: str
-    ) -> List[GitHubRepoResponse]:
+    async def get_user_repositories(self, username: str) -> List[Repository]:
         """Get user's repositories with languages"""
         # Check cache first
         cache_key = f"repos:{username}"
@@ -237,11 +235,20 @@ class GitHubService:
 
             # Build response
             filtered_repos = [
-                GitHubRepoResponse(
+                Repository(
                     name=repo["name"],
+                    full_name=repo["full_name"],
                     description=repo.get("description"),
+                    html_url=repo["html_url"],
                     languages=language_map.get(repo["name"], []),
-                    url=repo["html_url"],
+                    updated_at=repo["updated_at"],
+                    created_at=repo["created_at"],
+                    pushed_at=repo.get("pushed_at"),
+                    stargazers_count=repo["stargazers_count"],
+                    forks_count=repo["forks_count"],
+                    open_issues_count=repo["open_issues_count"],
+                    is_private=repo["private"],
+                    is_fork=repo["fork"],
                 )
                 for repo in repos
             ]

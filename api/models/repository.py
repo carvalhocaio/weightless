@@ -49,34 +49,6 @@ class Repository(BaseModel):
     is_fork: bool = Field(..., description="Whether repository is a fork")
 
 
-class GitHubRepoResponse(BaseModel):
-    """Legacy response model for backward compatibility"""
-
-    name: str = Field(..., description="Repository name")
-    description: Optional[str] = Field(
-        None, description="Repository description"
-    )
-    languages: List[str] = Field(
-        default_factory=list, description="Programming languages"
-    )
-    url: str = Field(..., description="Repository URL")
-
-
-class RepositoryListResponse(BaseModel):
-    """Response model for repository list endpoint"""
-
-    repositories: List[GitHubRepoResponse] = Field(
-        ..., description="List of repositories"
-    )
-    user: str = Field(..., description="GitHub username")
-    total_count: int = Field(
-        ..., ge=0, description="Total number of repositories returned"
-    )
-    cached: bool = Field(
-        False, description="Whether the response was served from cache"
-    )
-
-
 class ErrorDetail(BaseModel):
     """Model for error details"""
 
@@ -103,7 +75,8 @@ class HealthResponse(BaseModel):
 
     status: str = Field("healthy", description="Service status")
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="Check timestamp"
+        default_factory=lambda: datetime.now(UTC),
+        description="Check timestamp",
     )
     version: str = Field("1.0.0", description="API version")
 

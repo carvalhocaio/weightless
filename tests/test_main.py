@@ -6,7 +6,8 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from api.main import app
-from api.models.repository import GitHubRepoResponse
+from api.models.repository import Repository
+from datetime import datetime, UTC
 
 
 class TestMainEndpoints:
@@ -41,11 +42,20 @@ class TestMainEndpoints:
     def test_github_repos_valid_username(self, client):
         """Test GitHub repos endpoint with valid username"""
         mock_repos = [
-            GitHubRepoResponse(
+            Repository(
                 name="test-repo",
+                full_name="testuser/test-repo",
                 description="A test repository",
+                html_url="https://github.com/testuser/test-repo",
                 languages=["Python"],
-                url="https://github.com/testuser/test-repo",
+                updated_at=datetime.now(UTC),
+                created_at=datetime.now(UTC),
+                pushed_at=datetime.now(UTC),
+                stargazers_count=10,
+                forks_count=2,
+                open_issues_count=1,
+                is_private=False,
+                is_fork=False,
             )
         ]
 
@@ -158,11 +168,20 @@ class TestMainEndpoints:
     def test_correlation_id_in_response(self, client):
         """Test that correlation ID is added to response headers"""
         mock_repos = [
-            GitHubRepoResponse(
+            Repository(
                 name="test-repo",
+                full_name="testuser/test-repo",
                 description="A test repository",
+                html_url="https://github.com/testuser/test-repo",
                 languages=["Python"],
-                url="https://github.com/testuser/test-repo",
+                updated_at=datetime.now(UTC),
+                created_at=datetime.now(UTC),
+                pushed_at=datetime.now(UTC),
+                stargazers_count=10,
+                forks_count=2,
+                open_issues_count=1,
+                is_private=False,
+                is_fork=False,
             )
         ]
 
@@ -206,11 +225,20 @@ class TestMainEndpoints:
         ]
 
         mock_repos = [
-            GitHubRepoResponse(
+            Repository(
                 name="test-repo",
+                full_name="testuser/test-repo",
                 description="A test repository",
+                html_url="https://github.com/testuser/test-repo",
                 languages=["Python"],
-                url="https://github.com/testuser/test-repo",
+                updated_at=datetime.now(UTC),
+                created_at=datetime.now(UTC),
+                pushed_at=datetime.now(UTC),
+                stargazers_count=10,
+                forks_count=2,
+                open_issues_count=1,
+                is_private=False,
+                is_fork=False,
             )
         ]
 

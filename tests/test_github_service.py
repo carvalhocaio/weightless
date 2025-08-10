@@ -5,7 +5,7 @@ import httpx
 import pytest
 from fastapi import HTTPException
 
-from api.models.repository import GitHubRepoResponse
+from api.models.repository import Repository
 from api.services.github import GitHubService, _cache
 
 
@@ -251,7 +251,7 @@ class TestGitHubService:
                 repositories = await service.get_user_repositories(username)
 
         assert len(repositories) == 2
-        assert isinstance(repositories[0], GitHubRepoResponse)
+        assert isinstance(repositories[0], Repository)
         assert repositories[0].name == "test-repo-1"
         assert repositories[0].languages == ["Python", "JavaScript"]
         assert repositories[1].name == "test-repo-2"
@@ -262,11 +262,20 @@ class TestGitHubService:
         """Test cached repository fetching"""
         username = "testuser"
         cached_repos = [
-            GitHubRepoResponse(
+            Repository(
                 name="cached-repo",
+                full_name="testuser/cached-repo",
                 description="Cached repository",
+                html_url="https://github.com/testuser/cached-repo",
                 languages=["Python"],
-                url="https://github.com/testuser/cached-repo",
+                updated_at="2023-01-01T10:00:00Z",
+                created_at="2023-01-01T10:00:00Z",
+                pushed_at="2023-01-01T10:00:00Z",
+                stargazers_count=10,
+                forks_count=2,
+                open_issues_count=1,
+                is_private=False,
+                is_fork=False,
             )
         ]
 

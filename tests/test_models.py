@@ -7,7 +7,6 @@ from api.models.repository import (
     APIInfoResponse,
     ErrorDetail,
     ErrorResponse,
-    GitHubRepoResponse,
     HealthResponse,
     Repository,
     UsernameModel,
@@ -134,36 +133,6 @@ class TestRepository:
                 }
             )
 
-
-class TestGitHubRepoResponse:
-    """Test GitHubRepoResponse model"""
-
-    def test_valid_response(self):
-        """Test valid repo response"""
-        data = {
-            "name": "test-repo",
-            "description": "A test repository",
-            "languages": ["Python", "JavaScript"],
-            "url": "https://github.com/user/test-repo",
-        }
-
-        response = GitHubRepoResponse(**data)
-        assert response.name == "test-repo"
-        assert response.description == "A test repository"
-        assert response.languages == ["Python", "JavaScript"]
-        assert response.url == "https://github.com/user/test-repo"
-
-    def test_response_with_none_description(self):
-        """Test response with None description"""
-        data = {
-            "name": "test-repo",
-            "description": None,
-            "url": "https://github.com/user/test-repo",
-        }
-
-        response = GitHubRepoResponse(**data)
-        assert response.description is None
-        assert response.languages == []
 
 
 class TestErrorResponse:

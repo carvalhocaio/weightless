@@ -11,7 +11,7 @@ from .config.settings import settings
 from .models.repository import (
     APIInfoResponse,
     ErrorResponse,
-    GitHubRepoResponse,
+    Repository,
     HealthResponse,
     UsernameModel,
 )
@@ -80,7 +80,7 @@ def health() -> HealthResponse:
 
 @app.get(
     "/github/repos/{username}",
-    response_model=List[GitHubRepoResponse],
+    response_model=List[Repository],
     responses={
         404: {"model": ErrorResponse, "description": "User not found"},
         422: {
@@ -93,7 +93,7 @@ def health() -> HealthResponse:
         504: {"model": ErrorResponse, "description": "Request timeout"},
     },
 )
-async def get_github_repos(username: str) -> List[GitHubRepoResponse]:
+async def get_github_repos(username: str) -> List[Repository]:
     """
     Get user's GitHub repositories
 
