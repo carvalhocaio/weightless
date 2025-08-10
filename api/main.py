@@ -15,14 +15,24 @@ from pydantic import BaseModel, field_validator
 sentry_sdk.init(dsn=config("SENTRY_DSN"), send_default_pii=True)
 app = FastAPI()
 
+GITHUB_TOKEN = config("GITHUB_TOKEN")
+CORS_ORIGINS = config(
+    "CORS_ORIGINS",
+    default="http://localhost:3000,http://127.0.0.1:3000",
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=CORS_ORIGINS,
+    allow_methods=["GET"],
+    allow_headers=[
+        "Accept",
+        "Accept-Language",
+        "Content-Language",
+        "Content-Type",
+    ],
+    allow_credentials=False,
 )
-
-GITHUB_TOKEN = config("GITHUB_TOKEN")
 TIMEOUT = 30.0  # seconds
 MAX_RETRIES = 3
 
