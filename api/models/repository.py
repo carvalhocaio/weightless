@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import List, Optional
 
 from pydantic import BaseModel, Field, field_validator
@@ -103,7 +103,7 @@ class HealthResponse(BaseModel):
 
     status: str = Field("healthy", description="Service status")
     timestamp: datetime = Field(
-        default_factory=datetime.utcnow, description="Check timestamp"
+        default_factory=lambda: datetime.now(UTC), description="Check timestamp"
     )
     version: str = Field("1.0.0", description="API version")
 
